@@ -19,6 +19,7 @@
 			_exit(1);                               \
 		}                                           \
 	}                                               \
+#endif
 
 namespace joeyutil
 {
