@@ -18,8 +18,15 @@
 			perror("BLOCKINGOP signal interrupted");\
 			_exit(1);                               \
 		}                                           \
-	}                                               \
+	}                                               
 #endif
+#include <pthread.h>
+#include <semaphore.h>
+#include <stdio.h> 
+#include <unistd.h>
+#include <errno.h>
+#include <stdint.h>
+#include <list>
 
 namespace joeyutil
 {
@@ -47,8 +54,8 @@ namespace joeyutil
 				BlockingQueue(uint32_t capacity);
 				~BlockingQueue();
 
-				uint32_t Size() const{return uSize_};
-				uint32_t Capacity() const{return uCapacity_};
+				uint32_t Size() const {return uSize_;}
+				uint32_t Capacity() const {return uCapacity_;}
 				
 				void Put(T item);
 				T Get();
@@ -68,7 +75,7 @@ namespace joeyutil
 				sem_t sEmpty_;//初始化为0，表示队列中当前可以使用的item的个数
 
 				pthread_mutex_t mLock_;
-		}
+		};
 
 	
 	template <class T>
@@ -89,7 +96,7 @@ namespace joeyutil
 		}
 
 	template <class T>
-		BlockingQueue<T>::Put(T item)
+		void BlockingQueue<T>::Put(T item)
 		{
 			//是否有位置资源可以放入item?
 			BLOCKINGOP(sem_wait(&sFull_));
@@ -105,7 +112,7 @@ namespace joeyutil
 		}
 
 	template <class T>
-		BlockingQueue<T>::Get()
+		T BlockingQueue<T>::Get()
 		{
 			BLOCKINGOP(sem_wait(&sEmpty_));
 
